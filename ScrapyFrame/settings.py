@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'ScrapyFrame.pipelines.ScrapyframePipeline': 300,
+#    'ScrapyFrame.pipelines.RelationshipStoragePipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -88,3 +88,29 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# Common Opinion Fields
+OPINION_FIELDS = [
+    "title",
+    "key_word",
+    "url",
+    "content",
+    "degist",
+    "publish_time",
+    "source",
+    "author",
+    "tenden",
+    "media_id",
+    "level",
+    "area_id",
+    "comment",
+    "read",
+    "like",
+    "transpond",
+    "digest_id",
+    "data_id",
+    "create_time",
+    "update_time",
+    "tenden_state",
+    "topic_status"
+]
