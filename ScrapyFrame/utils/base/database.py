@@ -9,12 +9,25 @@ Descriptions:
 from __future__ import absolute_import
 
 import pymysql
+import redis
 import logging
 
 from ScrapyFrame.utils.conf import *
 
+class DBConnector(object):
+    @property
+    def _logger(self):
+        """Logger Property"""
+        logger = logging.getLogger(self.__class__.__name__)
+        return logging.LoggerAdapter(logger, {"Database": self})
+        
 
-class MySQLConnect:
+    def log(self, message, level=logging.DEBUG, **kwargs):
+        """Run logger to display log information"""
+        self._logger.log(level, message, **kwargs)
+
+
+class MySQLConnect(DBConnector):
     """MySQL Connection Obejct
 
     Connect the MySQL database with basic configuration, which there is not database
@@ -62,6 +75,7 @@ class MySQLConnect:
     def connection(self):
         return self.Connection
 
+
     @property
     def cursor(self):
         return self.Connection.cursor()
@@ -77,7 +91,7 @@ class MySQLConnect:
         if self.Connection.db is None:
             return "Database isn't connected"
         else:
-            logging.info(f"Database {self.Connection.db} isconnected")
+            self.log(f"Database {self.Connection.db} is connected", level=logging.INFO)
             return self.Connection.cursor() 
 
 
@@ -93,7 +107,4 @@ class MySQLConnect:
         
         return self.Connection.cursor()
 
-
-# test = MySQLConnect()
-# print(test.cursor)
 
