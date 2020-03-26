@@ -25,6 +25,13 @@ class DBConnector(object):
     def log(self, message, level=logging.DEBUG, **kwargs):
         """Run logger to display log information"""
         self._logger.log(level, message, **kwargs)
+    
+    def close(self):
+        """Close Connection"""
+        if hasattr(self, "connection"):
+            self.connection.close()
+        elif hasattr(self, "Connection"):
+            self.Connection.close()
 
 
 class MySQLConnect(DBConnector):
@@ -108,3 +115,42 @@ class MySQLConnect(DBConnector):
         return self.Connection.cursor()
 
 
+
+class RedisConnect(redis.StrictRedis, DBConnector):
+    """Redis Connection Obejct
+
+    Connect the redis database with configuration, and there is not database
+    connected in default configuration. The connection method is a connection pool.
+    Besides, it's inherient from redis.StrictRedis. Another methods can be used
+    like common redis object
+
+    Properties:
+        Connection: it's a alternative RedisConnect object 
+        ping: a method check connection status
+
+    Examples:
+        >>> from ScrapyFrame.utils.base.database import *
+        >>> conn = RedisConnect()
+        >>> conn.Connection
+            ScrapyFrame.utils.base.database.RedisConnect
+        >>> conn.__class__.__base__
+            redis.client.Redis
+        >>> conn.cursor.keys("*")
+            DataItem
+        >>> conn.sismember("DataItem", '124987')
+            False
+    """
+    def __init__(self,  **kwargs):
+        _redis.update(kwargs)
+        connection_pool = redis.ConnectionPool(**_redis, **kwargs)
+        super().__init__(connection_pool=connection_pool, **_redis)
+
+
+    def ping(self):
+        if not super().ping():
+            super(DBConnector, self).log("Can't connect redis server", level=logging.ERROR)
+        return super().ping()
+            
+    @property
+    def Connection(self):
+        return self

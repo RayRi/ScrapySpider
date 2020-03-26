@@ -32,8 +32,8 @@
 
 ```python
 from ScrapyFrame.utils.base.database import *
-conn = MySQLConnect()
-# 获取 connection 属性，和 pymysql.connections.Connection 相同
+conn = MySQLConnect() # 需要直接连接一个 Database 可以传入 database 的名称 eg: conn = MySQLConnect("hzjy_test")
+# 获取 connection 属性，和 pymysql.connections.Connection 对象相同
 conn.connection
 
 # 创建 cursor，根据是否已经连接数据库返回不同的数据
@@ -44,6 +44,21 @@ conn.cursor = "hzjy_test"
 
 # 执行查询命令
 conn.cursor.execute("SHOW TABLES;") 
+```
+
+### 2.1.2 Redis Connect
+
+`Redis` 连接的基本配置在 `conf` 在`redis.con` 中，该对象是继承了 `redis.StrictRedis` ，因此除了定制的 `Connection` 属性和 `ping` 方法外，可以直接使用 `redis` 的方法：
+
+```python
+from ScrapyFrame.utils.base.database import *
+conn = RedisConnect() 
+
+# 连接对象
+conn.Connection 
+
+# 检查数据是否为列表成员
+conn.sismember("DataItem", '124987')
 ```
 
 
