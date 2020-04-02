@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 import pymysql
 import redis
+import pymongo
 import logging
 
 from ScrapyFrame.utils.conf import *
@@ -141,8 +142,8 @@ class RedisConnect(redis.StrictRedis, DBConnector):
             False
     """
     def __init__(self,  **kwargs):
+        connection_pool = redis.ConnectionPool(**_redis)
         _redis.update(kwargs)
-        connection_pool = redis.ConnectionPool(**_redis, **kwargs)
         super().__init__(connection_pool=connection_pool, **_redis)
 
 
@@ -154,3 +155,60 @@ class RedisConnect(redis.StrictRedis, DBConnector):
     @property
     def Connection(self):
         return self
+
+
+class MongoDBConnect(pymongo.MongoClient, DBConnector):
+    """MongoDB Connection Object
+
+    Connect mongodb client
+    """
+    def __init__(self, *, db=None, **kwargs):
+        super().__init__(**_mongodb, **kwargs)
+
+        # Initialize the database, if db is not None
+        if db not in self.list_database_names():
+            if db is not None:
+                self.log(f"Initialize database {db}", level=logging.INFO)
+                self._db = self[db]
+            else:
+                self._db = None
+        else:
+            self._db = self[db]
+
+
+    @property
+    def Connection(self):
+        return self
+
+
+    @property
+    def database(self):
+        if self._db is None:
+            self.log(f"Database is not created", level=logging.DEBUG)
+        return self._db
+        
+
+    @database.setter
+    def database(self, value):
+        if not isinstance(value, str):
+            raise TypeError(f"Database name must be string, but get {type(value)}")
+        
+        if value not in self.list_database_names():
+            self.log(f"Change database {self.database._Database__name} to {value}")
+        self._db = self[value]
+
+    
+    @database.getter
+    def database(self):
+        return self._db
+
+    
+    @database.deleter
+    def database(self):
+        self._db = None
+
+    
+    def drop_database(self, db, **kwargs):
+        """Drop Database"""
+        super().drop_database(db, **kwargs)
+        self._db = None

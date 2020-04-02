@@ -14,6 +14,7 @@ from os import path
 
 _mysql = ConfigFactory.parse_file(path.join(path.dirname(__file__), "mysql.conf"))
 _redis = ConfigFactory.parse_file(path.join(path.dirname(__file__), "redis.conf"))
+_mongodb = ConfigFactory.parse_file(path.join(path.dirname(__file__), "mongodb.conf"))
 
 
-__all__ = ["_mysql", "_redis"]
+__all__ = ["_mysql", "_redis", "_mongodb"]
