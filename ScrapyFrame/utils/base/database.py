@@ -160,7 +160,32 @@ class RedisConnect(redis.StrictRedis, DBConnector):
 class MongoDBConnect(pymongo.MongoClient, DBConnector):
     """MongoDB Connection Object
 
-    Connect mongodb client
+    Connect mongodb client, so that can use MongoDB client. 
+
+    Arguments:
+        db: database name, must be used keyword argument
+
+    Properties:
+        Connection: it's a alternative the MongoDB client object itself
+        database: MongoDB database. Other methods is inherited from MongoDB client
+
+    Examples:
+        >>> from ScrapyFrame.utils.base.database import *
+        >>> conn = MongoDBConnect()
+        >>> conn.Connection
+            MongoClient(host=['192.168.1.31:27017'], document_class=dict, tz_aware=True, connect=True, minpoolsize=20)
+        >>> conn.__class__.__base__
+            pymongo.mongo_client.MongoClient
+        >>> conn.database = "test"
+        >>> conn.database
+            Database(MongoClient(host=['192.168.1.31:27017'], document_class=dict, tz_aware=True, connect=True, minpoolsize=20), 'test')
+        >>> posts = conn.database.posts
+        >>> post = {"author": "Mike",
+                "text": "My first blog post!",
+                "tags": ["mongodb", "python", "pymongo"]}
+        >>> posted_id = posts.insert_one(post).inserted_id
+        >>> posted_id
+            ObjectId('5e869254fe88e8e1747d5693')
     """
     def __init__(self, *, db=None, **kwargs):
         super().__init__(**_mongodb, **kwargs)
