@@ -79,3 +79,15 @@ class EndsPipeline:
             self.db_conn.database.insert_many(*args, **kwargs)
 
 
+class Middleware:
+    """Middleware Base"""
+    @property
+    def _logger(self):
+        """Logger Property"""
+        logger = logging.getLogger(self.__class__.__name__)
+        return logging.LoggerAdapter(logger, {"Middleware": self})
+        
+
+    def log(self, message, level=logging.DEBUG, **kwargs):
+        """Run logger to display log information"""
+        self._logger.log(level, message, **kwargs)
