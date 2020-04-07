@@ -218,7 +218,7 @@ class MongoDBConnect(pymongo.MongoClient, DBConnector):
         if not isinstance(value, str):
             raise TypeError(f"Database name must be string, but get {type(value)}")
         
-        if value not in self.list_database_names():
+        if value not in self.list_database_names() and self.database:
             self.log(f"Change database {self.database._Database__name} to {value}")
         self._db = self[value]
 
