@@ -5,6 +5,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import time
 import random
 import logging
 from scrapy import signals
@@ -146,3 +147,30 @@ class RandomUserAgentDownloaderMiddleware(Middleware):
         user_agent = random.choice(self.user_agents)
         request.headers["User-Agent"] = user_agent
         self.log(f"{request.url} choose UserAgent {user_agent}", level=logging.INFO)
+
+
+
+class RandomDelayDownloaderMiddleware(Middleware):
+    """Random Delay Request
+
+    Setup a max time to set delay request under random times. It can set a max 
+    time in `settings` with variable `RANDOM_DELAY`. If there is not 
+    `Random_DELAY`, set the max time 10 seconds.
+    """
+    def __init__(self, delay):
+        self.delay = delay
+
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        delay = crawler.settings.get("RANDOM_DELAY", 10)
+
+        return cls(delay=delay)
+
+
+    def process_request(self, request, spider):
+        delay = random.randint(1, self.delay)
+        self.log(f"{name} Delay {time}s".format(name=spider.name, time=delay), 
+                level=logging.INFO)
+        
+        time.sleep(delay)
