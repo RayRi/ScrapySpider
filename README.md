@@ -99,6 +99,34 @@ post_id = student.insert_one(post).inserted_id
 post_id
 ```
 
+## 2.2 Middleware & Pipeline & Filter
+
+### 2.2.1 RandomUserAgentDownloaderMiddleware
+
+随机化 UserAgent Middleware 类，启用是参考一般的 Middleware 方式—— `ScrapyFrame.middlewares.RandomUserAgentDownloaderMiddleware`。默认已经配置了可选择的 User-Agent，可以通过在 `settings` 添加比较的 `UserAgent` 序列。
+
+### 2.2.2 RandomDelayDownloaderMiddleware
+
+随机化延迟请求 middleware 类，启用方式在 `DOWNLOADER_MIDDLEWARES` 调用: `ScrapyFrame.middlewares.RandomDelayDownloaderMiddleware`。可以配置最大延迟时间（秒数），需要在 `settings` 中配置 `RANDOM_DELAY`
+
+### 2.2.3 CustomizeRFPDupeFilter
+
+定制化的重复请求筛选，该请求是主要是通过 `Cache database` 的方式进行筛选，目前定义的是使用 `redis` 来完成，启用方式分分为多个类型：
+
+```python
+# 启用该筛选类
+DUPEFILTER_CLASS =’ScrapyFrame.dupefilters.CustomizeRFPDupeFilter'
+# 启用筛选调试日志
+DUPEFILTER_DEBUG=True
+# 明确 cache database 名称，由 SPIDER_NAME 确认
+SPIDER_NAME
+
+### 以上内容需要在 settings 中进行配置，用于检测 unique 的数据需要在 reqeust 的 meta 中传入
+request.meta.get("UNIQUE_ID")
+```
+
+目前明确的筛选方式，是需要通过 `UNIQUE_ID` 来确认是否已经爬取过。
+
 
 
 # 3. Run
