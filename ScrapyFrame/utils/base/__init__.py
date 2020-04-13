@@ -60,3 +60,15 @@ class Middleware:
         self._logger.log(level, message, **kwargs)
 
 
+
+class SpiderBase(scrapy.Spider):
+    """Spider Base"""
+    @property
+    def _logger(self):
+        """Logger Property"""
+        NotImplemented
+        
+
+    def log(self, message, level=logging.DEBUG, **kwargs):
+        """Run logger to display log information"""
+        self._logger.log(level, message, **kwargs)
