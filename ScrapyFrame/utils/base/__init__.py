@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import logging
+import scrapy
 
 from functools import partial, wraps
 from ScrapyFrame.utils.base import database
@@ -37,15 +38,6 @@ class EndsPipeline:
         self._db_type = self.settings["db_type"]
         self._db_cache = self.settings["db_cache"]
 
-        # connect the database that is store the data
-        if self._db_type.lower() == "mysql":
-            self.db_conn = database.MySQLConnect(db=db)
-        elif self._db_type.lower() == "mongodb":
-            self.db_conn = database.MongoDBConnect(db=db)
-        else:
-            raise NotSupported(f"Database {db_type} can't be supported. MySQL "+
-                                "MongoDB can be supported")
-
         # connect cache database that is store some cache data, so that can check 
         # duplicated data, or do sth. else
         if self._db_cache == "redis":
@@ -57,26 +49,9 @@ class EndsPipeline:
 
     def close_spider(self, spider):
         """Close Connections"""
-        self.db_conn.close()
         self.cache_conn.close()
 
     
-    def insert_one(self, *args, **kwargs):
-        """Insert Single Data"""
-        if self._db_type.lower() == "mysql":
-            self.db_conn.cursor.execute(*args, **kwargs)
-            self.db_conn.Connection.commit()
-        elif self._db_type.lower() == "mongodb":
-            self.db_conn.database.insert_one(*args, **kwargs)
-
-    
-    def insert_many(self, *args, **kwargs):
-        """Insert Multi Data"""
-        if self._db_type.lower() == "mysql":
-            self.db_conn.cursor.executemany(*args, **kwargs)
-            self.db_conn.Connection.commit()
-        elif self._db_type.lower() == "mongodb":
-            self.db_conn.database.insert_many(*args, **kwargs)
 
 
 class Middleware:
@@ -91,3 +66,5 @@ class Middleware:
     def log(self, message, level=logging.DEBUG, **kwargs):
         """Run logger to display log information"""
         self._logger.log(level, message, **kwargs)
+
+
