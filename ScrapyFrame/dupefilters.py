@@ -34,13 +34,16 @@ class CustomizeRFPDupeFilter(RFPDupeFilter):
         return cls(job_dir(settings), debug)
 
 
-    def request_seen(self, reqeust):
+    def request_seen(self, request):
         unique_id = request.meta.get("UNIQUE_ID")
-        if unique_id in self.cache_conn.sismember(self.db, unique_id):
+        # if UNIQUE_ID doesn't exist, return None
+        if unique_id and  self.cache_conn.sismember(self.db, unique_id):
             return True
             self.logger.log(logging.INFO, f"Request data {unique_id} is duplicated")
         
-        self.fingerprints.add(unique_id)
+        if unique_id:
+            self.fingerprints.add(unique_id)
+            self.cache_conn.sadd(self.db, unique_id)
 
-        if self.file:
-            self.file.write(str(unique_id) + "\n")
+            if self.file:
+                self.file.write(str(unique_id) + "\n")
