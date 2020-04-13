@@ -111,7 +111,7 @@ class ScrapyframeDownloaderMiddleware(object):
 class RandomUserAgentDownloaderMiddleware(Middleware):
     """Random UserAgent Middleware"""
     def __init__(self, user_agents):
-        if user_agent:
+        if user_agents:
             self.user_agents = user_agents
         else:
             self.user_agents = [
@@ -146,6 +146,7 @@ class RandomUserAgentDownloaderMiddleware(Middleware):
     def process_request(self, request, spider):
         user_agent = random.choice(self.user_agents)
         request.headers["User-Agent"] = user_agent
+        self._logger = logging.getLogger(__class__.__name__+"."+spider.name)
         self.log(f"{request.url} choose UserAgent {user_agent}", level=logging.INFO)
 
 
@@ -169,8 +170,10 @@ class RandomDelayDownloaderMiddleware(Middleware):
 
 
     def process_request(self, request, spider):
+        self._logger = logging.getLogger(__class__.__name__+"."+spider.name)
         delay = random.randint(1, self.delay)
         self.log(f"{name} Delay {time}s".format(name=spider.name, time=delay), 
                 level=logging.INFO)
         
         time.sleep(delay)
+
