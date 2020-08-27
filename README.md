@@ -138,7 +138,7 @@ request.meta.get("UNIQUE_ID")
 
 # 4. Example
 
-[演示示例](./ScrapyFrame/ScrapyFrame/spiders/example.py) 是对*网易新闻*进行测试，使用建议：
+[演示示例](./ScrapyFrame/spiders/example.py) 是对*网易新闻*进行测试，使用建议：
 
 1. 针对多爬虫，在 `custom_settings` 中添加配置
 
